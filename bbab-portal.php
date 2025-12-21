@@ -26,6 +26,7 @@ define( 'BBAB_PORTAL_URL', plugin_dir_url( __FILE__ ) );
  */
 function bbab_portal_load_classes() {
     require_once BBAB_PORTAL_PATH . 'includes/class-access-control.php';
+    require_once BBAB_PORTAL_PATH . 'includes/class-shortcodes.php';
 }
 add_action( 'plugins_loaded', 'bbab_portal_load_classes' );
 
@@ -44,7 +45,6 @@ add_action( 'init', 'bbab_portal_init' );
  * Activation hook
  */
 function bbab_portal_activate() {
-    // Flush rewrite rules to ensure portal pages work correctly
     flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'bbab_portal_activate' );
@@ -56,3 +56,119 @@ function bbab_portal_deactivate() {
     flush_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'bbab_portal_deactivate' );
+
+/**
+ * Add settings page as top level menu
+ */
+function bbab_po_add_settings_page() {
+    add_menu_page(
+        'BBAB Portal Settings',
+        'BBAB Portal',
+        'manage_options',
+        'bbab-portal-settings',
+        'bbab_po_render_settings',
+        'dashicons-admin-home',  // or dashicons-dashboard, dashicons-lock, etc.
+        31  // Right after Business Card at 30
+    );
+} // <-- This was missing
+
+/**
+ * Render the settings page content.
+ */
+function bbab_po_render_settings() {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        return;
+    }
+    ?>
+    <div class="wrap">
+        <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields( 'bbab-portal-settings-group' );
+            do_settings_sections( 'bbab-portal-settings' );
+            submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+/**
+ * Register settings and fields.
+ */
+function bbab_po_register_settings() {
+    register_setting(
+        'bbab-portal-settings-group',
+        'bbab_portal_settings',  // <-- Comma was missing here
+        [
+            'type'              => 'array',
+            'sanitize_callback' => 'bbab_po_sanitize_settings',
+            'default'           => [],
+        ]
+    );
+
+    add_settings_section(
+        'bbab-portal-main-section',
+        'WPForms Integration',
+        'bbab_po_main_section_callback',
+        'bbab-portal-settings'
+    );
+
+    add_settings_field(
+        'bbab-portal-form-id',
+        'Portfolio Entry Form ID',
+        'bbab_po_form_id_field_callback',
+        'bbab-portal-settings',
+        'bbab-portal-main-section'
+    );
+} // <-- This was missing
+
+/**
+ * Section description callback.
+ */
+function bbab_po_main_section_callback() {
+    echo '<p>Enter the WPForms form ID for the portfolio entry form.</p>';
+}
+
+/**
+ * Field callback for Form ID.
+ */
+function bbab_po_form_id_field_callback() {
+    $options = get_option( 'bbab_portal_settings', [] );
+    $form_id = isset( $options['form_id'] ) ? $options['form_id'] : '';
+    ?>
+    <input
+        type="number"
+        name="bbab_portal_settings[form_id]"
+        value="<?php echo esc_attr( $form_id ); ?>"
+        class="regular-text"
+        min="0"
+    >
+    <p class="description">Find this in WPForms → All Forms → look at the ID column.</p>
+    <?php
+}
+
+/**
+ * Sanitize settings.
+ */
+function bbab_po_sanitize_settings( $input ) {
+    $sanitized = [];
+    if ( isset( $input['form_id'] ) ) {
+        $sanitized['form_id'] = absint( $input['form_id'] ); // absint for integer IDs
+    }
+    return $sanitized;
+}
+
+/**
+ * Helper function to get portal settings
+ */
+function bbab_portal_get_settings() {
+    $defaults = [
+        'form_id' => 0,
+    ];
+    return wp_parse_args( get_option( 'bbab_portal_settings', [] ), $defaults );
+}
+
+// Hook the settings page and registration
+add_action( 'admin_menu', 'bbab_po_add_settings_page' );
+add_action( 'admin_init', 'bbab_po_register_settings' );
