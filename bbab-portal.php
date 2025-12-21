@@ -169,6 +169,34 @@ function bbab_portal_get_settings() {
     return wp_parse_args( get_option( 'bbab_portal_settings', [] ), $defaults );
 }
 
+/**
+ * Reformat date field when saving portfolio entry meta
+ */
+function bbab_portal_fix_date_format( $meta_id, $post_id, $meta_key, $meta_value ) {
+    // Only target our date field
+    if ( $meta_key !== '_bbab_date_completed' ) {
+        return;
+    }
+    
+    // Only for portfolio entries
+    if ( get_post_type( $post_id ) !== 'bbab_portfolio' ) {
+        return;
+    }
+    
+    // If it's in mm/dd/yyyy format, convert to Y-m-d
+    if ( $meta_value && strpos( $meta_value, '/' ) !== false ) {
+        $timestamp = strtotime( $meta_value );
+        if ( $timestamp ) {
+            $new_format = date( 'Y-m-d', $timestamp );
+            // Remove this action temporarily to prevent infinite loop
+            remove_action( 'added_post_meta', 'bbab_portal_fix_date_format', 10 );
+            update_post_meta( $post_id, '_bbab_date_completed', $new_format );
+            add_action( 'added_post_meta', 'bbab_portal_fix_date_format', 10, 4 );
+        }
+    }
+}
+add_action( 'added_post_meta', 'bbab_portal_fix_date_format', 10, 4 );
+
 // Hook the settings page and registration
 add_action( 'admin_menu', 'bbab_po_add_settings_page' );
 add_action( 'admin_init', 'bbab_po_register_settings' );
