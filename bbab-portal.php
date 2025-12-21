@@ -197,6 +197,22 @@ function bbab_portal_fix_date_format( $meta_id, $post_id, $meta_key, $meta_value
 }
 add_action( 'added_post_meta', 'bbab_portal_fix_date_format', 10, 4 );
 
+/**
+ * Enqueue portal styles on frontend
+ */
+function bbab_portal_enqueue_styles() {
+    // Load on all frontend pages for now - we can optimize later
+    if ( ! is_admin() ) {
+        wp_enqueue_style(
+            'bbab-portal-styles',
+            BBAB_PORTAL_URL . 'assets/css/portal.css',
+            [],
+            BBAB_PORTAL_VERSION
+        );
+    }
+}
+add_action( 'wp_enqueue_scripts', 'bbab_portal_enqueue_styles' );
+
 // Hook the settings page and registration
 add_action( 'admin_menu', 'bbab_po_add_settings_page' );
 add_action( 'admin_init', 'bbab_po_register_settings' );

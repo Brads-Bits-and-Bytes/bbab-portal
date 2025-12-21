@@ -1,0 +1,287 @@
+/**
+ * BBAB Portal Styles
+ * 
+ * Styles for the portal dashboard shortcodes.
+ * Matches the site theme: Poppins font, blue color scheme.
+ */
+
+/* ==========================================================================
+   CSS Variables (matching site theme)
+   ========================================================================== */
+:root {
+    --bbab-primary: #1C244B;
+    --bbab-accent: #467FF7;
+    --bbab-body-text: #324A6D;
+    --bbab-light-bg: #F3F5F8;
+    --bbab-white: #FFFFFF;
+    --bbab-border: #E2E8F0;
+    --bbab-success: #10B981;
+    --bbab-warning: #F59E0B;
+    --bbab-muted: #94A3B8;
+    --bbab-font: 'Poppins', sans-serif;
+    --bbab-radius: 12px;
+    --bbab-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   Base Card Styles (shared across all shortcodes)
+   ========================================================================== */
+.bbab-portal-card {
+    background: var(--bbab-white);
+    border-radius: var(--bbab-radius);
+    box-shadow: var(--bbab-shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+    font-family: var(--bbab-font);
+}
+
+.bbab-portal-card h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--bbab-primary);
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--bbab-light-bg);
+}
+
+.bbab-portal-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bbab-primary);
+    margin: 20px 0 12px 0;
+}
+
+.bbab-portal-card ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bbab-portal-card li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--bbab-light-bg);
+    color: var(--bbab-body-text);
+    font-size: 15px;
+    font-weight: 300;
+}
+
+.bbab-portal-card li:last-child {
+    border-bottom: none;
+}
+
+.bbab-portal-card a {
+    color: var(--bbab-accent);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s ease;
+}
+
+.bbab-portal-card a:hover {
+    color: var(--bbab-primary);
+    text-decoration: underline;
+}
+
+.bbab-empty-state {
+    color: var(--bbab-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Quick Links Shortcode
+   ========================================================================== */
+.bbab-portal-links li {
+    display: flex;
+    align-items: center;
+}
+
+.bbab-portal-links li a {
+    display: block;
+    width: 100%;
+    padding: 4px 0;
+    font-size: 15px;
+}
+
+.bbab-portal-links li a::before {
+    content: '→';
+    margin-right: 10px;
+    color: var(--bbab-accent);
+}
+
+/* ==========================================================================
+   Stats Shortcode
+   ========================================================================== */
+.bbab-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.bbab-stat {
+    background: var(--bbab-light-bg);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.bbab-stat-number {
+    display: block;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--bbab-primary);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.bbab-stat-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--bbab-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bbab-status-list {
+    background: var(--bbab-light-bg);
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+.bbab-status-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bbab-border);
+}
+
+.bbab-status-list li:last-child {
+    border-bottom: none;
+}
+
+.bbab-status-label {
+    font-weight: 400;
+    color: var(--bbab-body-text);
+}
+
+.bbab-status-count {
+    font-weight: 600;
+    color: var(--bbab-primary);
+    background: var(--bbab-white);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.bbab-last-updated {
+    margin: 20px 0 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--bbab-light-bg);
+    font-size: 14px;
+    color: var(--bbab-muted);
+}
+
+.bbab-last-updated strong {
+    color: var(--bbab-body-text);
+}
+
+/* ==========================================================================
+   Recent & Drafts Shortcodes
+   ========================================================================== */
+.bbab-portal-recent li,
+.bbab-portal-drafts li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.bbab-portal-recent li strong,
+.bbab-portal-drafts li strong {
+    flex: 1;
+    color: var(--bbab-primary);
+    font-weight: 500;
+}
+
+.bbab-meta {
+    font-size: 13px;
+    color: var(--bbab-muted);
+    font-weight: 300;
+}
+
+.bbab-actions {
+    font-size: 13px;
+}
+
+.bbab-actions a {
+    font-weight: 400;
+}
+
+/* Status badges */
+.bbab-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--bbab-muted);
+    color: var(--bbab-white);
+}
+
+.bbab-status-draft {
+    background: var(--bbab-warning);
+}
+
+.bbab-status-pending {
+    background: var(--bbab-accent);
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+    .bbab-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .bbab-stat {
+        padding: 16px;
+    }
+    
+    .bbab-stat-number {
+        font-size: 28px;
+    }
+    
+    .bbab-portal-recent li,
+    .bbab-portal-drafts li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .bbab-portal-recent li strong,
+    .bbab-portal-drafts li strong {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+    
+    .bbab-meta,
+    .bbab-actions {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .bbab-portal-card {
+        padding: 16px;
+    }
+    
+    .bbab-portal-card h3 {
+        font-size: 18px;
+    }
+}
