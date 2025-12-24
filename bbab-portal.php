@@ -3,7 +3,7 @@
  * Plugin Name: BBAB Portal
  * Plugin URI: https://bradwales.com
  * Description: Private admin portal with server-side authentication for managing portfolio entries.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Brad Wales
  * Author URI: https://bradwales.com
  * Text Domain: bbab-portal
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'BBAB_PORTAL_VERSION', '1.0.0' );
+define( 'BBAB_PORTAL_VERSION', '1.1.0' );
 define( 'BBAB_PORTAL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BBAB_PORTAL_URL', plugin_dir_url( __FILE__ ) );
 
