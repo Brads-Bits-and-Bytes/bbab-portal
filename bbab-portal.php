@@ -121,6 +121,14 @@ function bbab_po_register_settings() {
         'bbab-portal-settings',
         'bbab-portal-main-section'
     );
+    // Add the Portal Page field - NEW
+    add_settings_field(
+        'bbab-portal-page-id',
+        'Protected Portal Page',
+        'bbab_po_portal_page_field_callback',
+        'bbab-portal-settings',
+        'bbab-portal-main-section'
+    );
 } // <-- This was missing
 
 /**
@@ -149,12 +157,41 @@ function bbab_po_form_id_field_callback() {
 }
 
 /**
+ * Field callback for Portal Page dropdown.
+ * 
+ * Uses wp_dropdown_pages() - a WordPress helper that creates
+ * a <select> element populated with all published pages.
+ */
+function bbab_po_portal_page_field_callback() {
+    $options = get_option( 'bbab_portal_settings', [] );
+    $page_id = isset( $options['portal_page_id'] ) ? $options['portal_page_id'] : 0;
+    
+    wp_dropdown_pages( [
+        'name'              => 'bbab_portal_settings[portal_page_id]',
+        'id'                => 'bbab_portal_page_id',
+        'selected'          => $page_id,
+        'show_option_none'  => '— Select a Page —',
+        'option_none_value' => 0,
+    ] );
+    ?>
+    <p class="description">
+        Select the page to protect. All child pages will also be protected automatically.
+    </p>
+    <?php
+}
+
+/**
  * Sanitize settings.
  */
 function bbab_po_sanitize_settings( $input ) {
     $sanitized = [];
     if ( isset( $input['form_id'] ) ) {
         $sanitized['form_id'] = absint( $input['form_id'] ); // absint for integer IDs
+    }
+
+     // NEW: Sanitize portal page ID
+    if ( isset( $input['portal_page_id'] ) ) {
+        $sanitized['portal_page_id'] = absint( $input['portal_page_id'] );
     }
     return $sanitized;
 }
@@ -164,7 +201,8 @@ function bbab_po_sanitize_settings( $input ) {
  */
 function bbab_portal_get_settings() {
     $defaults = [
-        'form_id' => 0,
+        'form_id'        => 0,
+        'portal_page_id' => 0,  // NEW: The page ID to protect
     ];
     return wp_parse_args( get_option( 'bbab_portal_settings', [] ), $defaults );
 }

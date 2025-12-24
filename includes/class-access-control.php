@@ -306,9 +306,23 @@ class BBAB_Portal_Access_Control {
     public function handle_failed_login( $username ) {
         $referrer = wp_get_referer();
         
-        // Check if login attempt came from a portal page
-        if ( $referrer && strpos( $referrer, 'brads-portal' ) !== false ) {
-            // Remove any existing login parameter and add failed
+        if ( ! $referrer ) {
+            return;
+        }
+
+        // Get the protected page URL to check against
+        $settings = bbab_portal_get_settings();
+        $portal_page_id = (int) $settings['portal_page_id'];
+        
+        if ( $portal_page_id === 0 ) {
+            return;
+        }
+
+        $portal_url = get_permalink( $portal_page_id );
+        
+        // Check if login attempt came from a portal page (or child page)
+        // We check if the referrer starts with the portal URL
+        if ( strpos( $referrer, $portal_url ) === 0 ) {
             $redirect_url = remove_query_arg( 'login', $referrer );
             $redirect_url = add_query_arg( 'login', 'failed', $redirect_url );
             
@@ -321,8 +335,8 @@ class BBAB_Portal_Access_Control {
      * Determine if the current page is a protected portal page
      * 
      * We protect:
-     * - The main portal page (/brads-portal/)
-     * - Any child pages of the portal (/brads-portal/add-portfolio/, etc.)
+     * - The page selected in Settings (by ID, not slug)
+     * - Any child pages of that page
      *
      * @return bool True if current page should be protected
      */
@@ -339,17 +353,23 @@ class BBAB_Portal_Access_Control {
             return false;
         }
 
-        // Check 1: Is this the main portal page?
-        if ( $post->post_name === 'brads-portal' ) {
+        // Get the protected page ID from settings
+        $settings = bbab_portal_get_settings();
+        $portal_page_id = (int) $settings['portal_page_id'];
+
+        // No page configured? Nothing to protect
+        if ( $portal_page_id === 0 ) {
+            return false;
+        }
+
+        // Check 1: Is this the protected portal page itself?
+        if ( $post->ID === $portal_page_id ) {
             return true;
         }
 
         // Check 2: Is this a child of the portal page?
-        if ( $post->post_parent ) {
-            $parent = get_post( $post->post_parent );
-            if ( $parent && $parent->post_name === 'brads-portal' ) {
-                return true;
-            }
+        if ( $post->post_parent === $portal_page_id ) {
+            return true;
         }
 
         // Not a portal page
